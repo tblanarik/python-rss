@@ -5,6 +5,15 @@ name: Auto pages deploy
 on:
   push:
     branches: [ main ]
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '3 */2 * * *'
+
+jobs:
+  pages-build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10' 
+    - run: python rss.py
