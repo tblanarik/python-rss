@@ -19,3 +19,11 @@ jobs:
         cache: 'pip' # caching pip dependencies
     - run: pip install feedparser
     - run: python rss.py
+
+    - name: GitHub Pages
+      if: success()
+      uses: crazy-max/ghaction-github-pages@v3
+      with:
+        build_dir: public
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
