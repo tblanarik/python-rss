@@ -29,6 +29,3 @@ entries = [entry for entry in NewsFeed.entries if time_filter(entry)]
 f = open('index.html', 'w')
 f.write(make_page(entries))
 f.close()
-
-    #print('Post Title :', entry.title)
-    #    print('Link: ', entry.link)
