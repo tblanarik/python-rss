@@ -1,5 +1,6 @@
 import feedparser
 import datetime
+import os
 
 NewsFeed = feedparser.parse("https://reddit.com/r/olympia/hot/.rss?limit=100")
 
@@ -26,6 +27,7 @@ def make_page(entries):
     return txt
 entries = [entry for entry in NewsFeed.entries if time_filter(entry)]
 
-f = open('index.html', 'w')
+os.mkdir('public')
+f = open('public/index.html', 'w')
 f.write(make_page(entries))
 f.close()
