@@ -1,6 +1,8 @@
 import feedparser
 import datetime
 import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 NewsFeed = feedparser.parse("https://reddit.com/r/olympia/hot/.rss?limit=100")
 
