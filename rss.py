@@ -1,8 +1,8 @@
 import feedparser
 import datetime
 import os
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+import sendgrid
+from sendgrid.helpers.mail import *
 
 NewsFeed = feedparser.parse("https://reddit.com/r/olympia/hot/.rss?limit=100")
 
@@ -29,15 +29,13 @@ def make_page(entries):
     return txt
 entries = [entry for entry in NewsFeed.entries if time_filter(entry)]
 
-
-message = Mail(
-    from_email=os.environ.get('SENDER_EMAIL_ADDRESS'),
-    to_emails=os.environ.get('RECIPIENT_EMAIL_ADDRESS'),
-    subject='Test Email',
-    html_content='Test content')
-
-sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-response = sg.send(message)
+sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
+from_email = Email(os.environ.get('SENDER_EMAIL_ADDRESS'))
+to_email = To(os.environ.get('RECIPIENT_EMAIL_ADDRESS'))
+subject = "Test Email"
+content = Content("text/plain", "Test content")
+mail = Mail(from_email, to_email, subject, content)
+response = sg.client.mail.send.post(request_body=mail.get())
 print(response.status_code)
 print(response.body)
 print(response.headers)
