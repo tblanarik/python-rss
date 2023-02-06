@@ -29,7 +29,17 @@ def make_page(entries):
     return txt
 entries = [entry for entry in NewsFeed.entries if time_filter(entry)]
 
-os.mkdir('public')
-f = open('public/index.html', 'w')
-f.write(make_page(entries))
-f.close()
+
+message = Mail(
+    from_email=os.environ.get('SENDER_EMAIL_ADDRESS'),
+    to_emails=os.environ.get('RECIPIENT_EMAIL_ADDRESS'),
+    subject='Test Email',
+    html_content=make_page(entries))
+try:
+    sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+    response = sg.send(message)
+    print(response.status_code)
+    print(response.body)
+    print(response.headers)
+except Exception as e:
+    print(e.message)
