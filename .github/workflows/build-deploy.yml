@@ -1,4 +1,4 @@
-name: RSS Retrieve and Pages deploy
+name: RSS Retrieve and Send Email
 
 on:
   workflow_dispatch:
