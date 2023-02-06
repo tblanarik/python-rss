@@ -35,11 +35,9 @@ message = Mail(
     to_emails=os.environ.get('RECIPIENT_EMAIL_ADDRESS'),
     subject='Test Email',
     html_content='Test content')
-try:
-    sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-    response = sg.send(message)
-    print(response.status_code)
-    print(response.body)
-    print(response.headers)
-except Exception as e:
-    print(e.message)
+
+sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+response = sg.send(message)
+print(response.status_code)
+print(response.body)
+print(response.headers)
