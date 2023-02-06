@@ -29,20 +29,20 @@ def make_page(entries):
 entries = [entry for entry in NewsFeed.entries if time_filter(entry)]
 
 
-sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
+sg = sendgrid.SendGridAPIClient(api_key=os.getenv('SENDGRID_API_KEY'))
 data = {
   "personalizations": [
     {
       "to": [
         {
-          "email": os.environ.get('SENDER_EMAIL_ADDRESS')
+          "email": os.getenv('SENDER_EMAIL_ADDRESS')
         }
       ],
       "subject": "Test subject"
     }
   ],
   "from": {
-    "email": os.environ.get('SENDER_EMAIL_ADDRESS')
+    "email": os.getenv('SENDER_EMAIL_ADDRESS')
   },
   "content": [
     {
