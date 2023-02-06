@@ -34,7 +34,7 @@ message = Mail(
     from_email=os.environ.get('SENDER_EMAIL_ADDRESS'),
     to_emails=os.environ.get('RECIPIENT_EMAIL_ADDRESS'),
     subject='Test Email',
-    html_content=make_page(entries))
+    html_content='Test content')
 try:
     sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
     response = sg.send(message)
