@@ -8,6 +8,8 @@ SENDGRID_API_KEY = sys.argv[1]
 SENDER_EMAIL_ADDRESS = sys.argv[2]
 RECIPIENT_EMAIL_ADDRESS = sys.argv[3]
 
+DATE_STRING = datetime.datetime.now().strftime("%Y-%m-%d")
+
 NewsFeed = feedparser.parse("https://reddit.com/r/olympia/hot/.rss?limit=100")
 
 def time_filter(entry, days=7):
@@ -33,7 +35,6 @@ def make_page(entries):
     return txt
 entries = [entry for entry in NewsFeed.entries if time_filter(entry)]
 
-
 sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
 data = {
   "personalizations": [
@@ -43,7 +44,7 @@ data = {
           "email": RECIPIENT_EMAIL_ADDRESS
         }
       ],
-      "subject": "Weekly r/Olympia Digest"
+      "subject": f('Weekly r/Olympia Digest - {DATE_STRING}')
     }
   ],
   "from": {
