@@ -17,8 +17,4 @@ jobs:
         python-version: '3.10' 
         cache: 'pip' # caching pip dependencies
     - run: pip install -r requirements.txt
-      env:
-        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-        SENDER_EMAIL_ADDRESS: ${{ secrets.SENDER_EMAIL_ADDRESS }}
-        RECIPIENT_EMAIL_ADDRESS: ${{ secrets.RECIPIENT_EMAIL_ADDRESS }}
-    - run: python rss.py
+    - run: python rss.py ${{ secrets.SENDGRID_API_KEY }} ${{ secrets.SENDER_EMAIL_ADDRESS }} ${{ secrets.RECIPIENT_EMAIL_ADDRESS }}

@@ -1,7 +1,12 @@
-import feedparser
-import datetime
+import sys
 import os
+import datetime
+import feedparser
 import sendgrid
+
+SENDGRID_API_KEY = sys.argv[1]
+SENDER_EMAIL_ADDRESS = sys.argv[2]
+RECIPIENT_EMAIL_ADDRESS = sys.argv[3]
 
 NewsFeed = feedparser.parse("https://reddit.com/r/olympia/hot/.rss?limit=100")
 
@@ -29,21 +34,20 @@ def make_page(entries):
 entries = [entry for entry in NewsFeed.entries if time_filter(entry)]
 
 
-sg = sendgrid.SendGridAPIClient(api_key=os.getenv('SENDGRID_API_KEY'))
-print("secret check ", os.getenv('TEST_SECRET'))
+sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
 data = {
   "personalizations": [
     {
       "to": [
         {
-          "email": os.getenv('RECIPIENT_EMAIL_ADDRESS')
+          "email": RECIPIENT_EMAIL_ADDRESS
         }
       ],
       "subject": "Test subject"
     }
   ],
   "from": {
-    "email": os.getenv('SENDER_EMAIL_ADDRESS')
+    "email": SENDER_EMAIL_ADDRESS
   },
   "content": [
     {
@@ -52,6 +56,7 @@ data = {
     }
   ]
 }
+
 response = sg.client.mail.send.post(request_body=data)
 print(response.status_code)
 print(response.body)
