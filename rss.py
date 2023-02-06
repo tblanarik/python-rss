@@ -44,7 +44,7 @@ data = {
           "email": RECIPIENT_EMAIL_ADDRESS
         }
       ],
-      "subject": f('Weekly r/Olympia Digest - {DATE_STRING}')
+      "subject": f'Weekly r/Olympia Digest - {DATE_STRING}'
     }
   ],
   "from": {
