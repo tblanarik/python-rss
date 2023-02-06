@@ -43,7 +43,7 @@ data = {
           "email": RECIPIENT_EMAIL_ADDRESS
         }
       ],
-      "subject": "Test subject"
+      "subject": "Weekly r/Olympia Digest"
     }
   ],
   "from": {
@@ -51,8 +51,8 @@ data = {
   },
   "content": [
     {
-      "type": "text/plain",
-      "value": "Test content"
+      "type": "text/html",
+      "value": make_page(entries)
     }
   ]
 }
