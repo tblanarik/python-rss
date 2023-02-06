@@ -30,12 +30,13 @@ entries = [entry for entry in NewsFeed.entries if time_filter(entry)]
 
 
 sg = sendgrid.SendGridAPIClient(api_key=os.getenv('SENDGRID_API_KEY'))
+print("secret check ", os.getenv('TEST_SECRET'))
 data = {
   "personalizations": [
     {
       "to": [
         {
-          "email": os.getenv('SENDER_EMAIL_ADDRESS')
+          "email": os.getenv('RECIPIENT_EMAIL_ADDRESS')
         }
       ],
       "subject": "Test subject"
