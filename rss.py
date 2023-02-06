@@ -7,10 +7,7 @@ import sendgrid
 SENDGRID_API_KEY = sys.argv[1]
 SENDER_EMAIL_ADDRESS = sys.argv[2]
 RECIPIENT_EMAIL_ADDRESS = sys.argv[3]
-
 DATE_STRING = datetime.datetime.now().strftime("%Y-%m-%d")
-
-NewsFeed = feedparser.parse("https://reddit.com/r/olympia/hot/.rss?limit=100")
 
 def time_filter(entry, days=7):
     date_only = entry.published.split('T')[0]
@@ -33,6 +30,8 @@ def make_page(entries):
         txt += "</li>"
     txt += "</ul></body></html>"
     return txt
+
+NewsFeed = feedparser.parse("https://reddit.com/r/olympia/hot/.rss?limit=100")
 entries = [entry for entry in NewsFeed.entries if time_filter(entry)]
 
 sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
@@ -59,6 +58,4 @@ data = {
 }
 
 response = sg.client.mail.send.post(request_body=data)
-print(response.status_code)
-print(response.body)
-print(response.headers)
+print("Sendgrid status code:", response.status_code)
