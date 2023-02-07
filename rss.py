@@ -1,61 +1,54 @@
 import sys
-import os
-import datetime
+from datetime import datetime, timezone
 import feedparser
 import sendgrid
 
-SENDGRID_API_KEY = sys.argv[1]
-SENDER_EMAIL_ADDRESS = sys.argv[2]
-RECIPIENT_EMAIL_ADDRESS = sys.argv[3]
-DATE_STRING = datetime.datetime.now().strftime("%Y-%m-%d")
 
-def time_filter(entry, days=7):
-    date_only = entry.published.split('T')[0]
-    delta = datetime.datetime.now() - datetime.datetime.strptime(date_only, '%Y-%m-%d')
+def time_filter(date_string, days=7):
+    parsed_date = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%S%z')
+    delta = datetime.now(timezone.utc) - parsed_date
     return delta.days <= days
 
 def make_html_link(entry):
-    txt = '<a href="{url}">{title}</a>'
-    return txt.format(url=entry.link, title=entry.title)
+    return f'<a href="{entry.link}">{entry.title}</a>'
 
 def make_page(entries):
-    txt = """<html><body>
-    <h1>r/Olympia</h1>
-    <br>
-    <ul>
-    """
-    for entry in entries:
-        txt += "<li>"
-        txt += make_html_link(entry)
-        txt += "</li>"
-    txt += "</ul></body></html>"
-    return txt
+    html = []
+    html.append('<html><body><h1>r/Olympia</h1><br><ul>')
+    html.extend([f'<li>{make_html_link(entry)}</li>' for entry in entries])
+    html.append(f'</ul></body></html>')
+    return ''.join(html)
 
-NewsFeed = feedparser.parse("https://reddit.com/r/olympia/hot/.rss?limit=100")
-entries = [entry for entry in NewsFeed.entries if time_filter(entry)]
+def generate_email_data(RECIPIENT_EMAIL_ADDRESS, SENDER_EMAIL_ADDRESS, content):
+  return {
+    "personalizations": [
+      {
+        "to": [
+          {
+            "email": RECIPIENT_EMAIL_ADDRESS
+          }
+        ],
+        "subject": f'Weekly r/Olympia Digest - {datetime.now(timezone.utc).strftime("%Y-%m-%d")}'
+      }
+    ],
+    "from": {
+      "email": SENDER_EMAIL_ADDRESS
+    },
+    "content": [
+      {
+        "type": "text/html",
+        "value": content
+      }
+    ]
+  }
 
-sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
-data = {
-  "personalizations": [
-    {
-      "to": [
-        {
-          "email": RECIPIENT_EMAIL_ADDRESS
-        }
-      ],
-      "subject": f'Weekly r/Olympia Digest - {DATE_STRING}'
-    }
-  ],
-  "from": {
-    "email": SENDER_EMAIL_ADDRESS
-  },
-  "content": [
-    {
-      "type": "text/html",
-      "value": make_page(entries)
-    }
-  ]
-}
+if __name__ == "__main__":
+  SENDGRID_API_KEY = sys.argv[1]
+  SENDER_EMAIL_ADDRESS = sys.argv[2]
+  RECIPIENT_EMAIL_ADDRESS = sys.argv[3]
 
-response = sg.client.mail.send.post(request_body=data)
-print("Sendgrid status code:", response.status_code)
+  NewsFeed = feedparser.parse("https://reddit.com/r/olympia/hot/.rss?limit=100")
+  entries = [entry for entry in NewsFeed.entries if time_filter(entry.published)]
+  sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
+  response = sg.client.mail.send.post(request_body=generate_email_data(RECIPIENT_EMAIL_ADDRESS, SENDER_EMAIL_ADDRESS, make_page(entries)))
+  print("Sendgrid status code:", response.status_code)
