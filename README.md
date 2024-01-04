@@ -12,5 +12,6 @@ The GitHub Action requires 3 [repository secrets](https://docs.github.com/en/act
 The email addresses are secrets for privacy purposes.
 
 ### Dependencies
+
 - [feedparser](https://github.com/kurtmckee/feedparser)
 - [sendgrid](https://github.com/sendgrid/sendgrid-python#readme)
